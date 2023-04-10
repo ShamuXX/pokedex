@@ -1,6 +1,9 @@
 import { Inter } from "next/font/google";
 import styles from "@/styles/Home.module.css";
 import { useEffect, useState } from "react";
+import { Carousel } from "react-responsive-carousel";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+import Image from "next/image";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -31,22 +34,50 @@ export default function Home() {
 
   return (
     <div className={styles.container}>
-      <h1>Hola</h1>
-      <div className="pokedex">
+      <h1>Pokedex</h1>
+      <div className={styles.pokedex}>
         {load ? (
           <p>Loading...</p>
         ) : (
-          poke.map((data, index) => (
-            <div key={data.id}>
-              <img src={data.sprites.front_default} />
-              <h2>{data.name}</h2>
-              <p>{data.types[0].type.name}</p>
-              {console.log(data.types.length)}
-              {data.types.length === 2 ? (
-                <p>{data.types[1].type.name}</p>
-              ) : null}
-            </div>
-          ))
+          <div className={styles.screenPokedex}>
+            <Carousel
+              showThumbs={true}
+              autoPlay
+              showIndicators={false}
+              width="100%"
+            >
+              {poke.map((data, index) => (
+                <div key={data.id} className={styles.containerImgPoke}>
+                  <h2 className={styles.name}>
+                    {data.name.charAt(0).toUpperCase() + data.name.slice(1)}
+                  </h2>
+                  <img
+                    src={data.sprites.front_default}
+                    alt={data.name}
+                    width={100}
+                  />
+
+                  <div className={styles.cointainerTypes}>
+                    <div>
+                      <h4 className={styles.type}>
+                        {data.types[0].type.name.charAt(0).toUpperCase() +
+                          data.types[0].type.name.slice(1)}
+                      </h4>
+                    </div>
+
+                    {data.types.length === 2 ? (
+                      <div>
+                        <h4 className={styles.type}>
+                          {data.types[1].type.name.charAt(0).toUpperCase() +
+                            data.types[1].type.name.slice(1)}
+                        </h4>
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
+              ))}
+            </Carousel>
+          </div>
         )}
       </div>
     </div>
