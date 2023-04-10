@@ -6,6 +6,33 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import Image from "next/image";
 
 const inter = Inter({ subsets: ["latin"] });
+function takeColorType(type) {
+  var objectColorType = {
+    normal: "#A8A77A",
+    fire: "#EE8130",
+    water: "#6390F0",
+    electric: "#F7D02C",
+    grass: "#7AC74C",
+    ice: "#96D9D6",
+    fighting: "#C22E28",
+    poison: "#A33EA1",
+    ground: "#E2BF65",
+    flying: "#A98FF3",
+    psychic: "#F95587",
+    bug: "#A6B91A",
+    rock: "#B6A136",
+    ghost: "#735797",
+    dragon: "#6F35FC",
+    dark: "#705746",
+    steel: "#B7B7CE",
+    fairy: "#D685AD",
+  };
+  if (objectColorType.hasOwnProperty(type)) {
+    return objectColorType[type];
+  } else {
+    return "white";
+  }
+}
 
 export default function Home() {
   const [poke, setPoke] = useState([]);
@@ -58,7 +85,14 @@ export default function Home() {
                   />
 
                   <div className={styles.cointainerTypes}>
-                    <div>
+                    <div
+                      style={{
+                        background: takeColorType(data.types[0].type.name),
+                        width: "80px",
+                        marginRight: "10px",
+                        borderRadius: "10px",
+                      }}
+                    >
                       <h4 className={styles.type}>
                         {data.types[0].type.name.charAt(0).toUpperCase() +
                           data.types[0].type.name.slice(1)}
@@ -66,7 +100,13 @@ export default function Home() {
                     </div>
 
                     {data.types.length === 2 ? (
-                      <div>
+                      <div
+                        style={{
+                          background: takeColorType(data.types[1].type.name),
+                          width: "80px",
+                          borderRadius: "10px",
+                        }}
+                      >
                         <h4 className={styles.type}>
                           {data.types[1].type.name.charAt(0).toUpperCase() +
                             data.types[1].type.name.slice(1)}
