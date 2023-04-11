@@ -3,7 +3,6 @@ import styles from "@/styles/Home.module.css";
 import { useEffect, useState } from "react";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import Image from "next/image";
 
 const inter = Inter({ subsets: ["latin"] });
 function takeColorType(type) {
@@ -35,24 +34,31 @@ function takeColorType(type) {
 }
 
 export default function Home() {
-  const [poke, setPoke] = useState([]);
-  const [result, setResult] = useState([]);
+  const [pokeData, setPokeData] = useState([]);
   const [load, setLoad] = useState(true);
-  const arr = [];
 
   useEffect(() => {
-    fetch("https://pokeapi.co/api/v2/pokemon/?limit=50")
+    fetch("https://pokeapi.co/api/v2/pokemon/?limit=100")
       .then((response) => response.json())
-      .then((data) =>
-        setResult(
-          data.results.map((item) => {
-            fetch(item.url)
-              .then((response) => response.json())
-              .then((allpokemon) => arr.push(allpokemon));
-            setPoke(arr);
+      .then((data) => {
+        const results = data.results;
+        const promises = results.map((item) => {
+          return fetch(item.url)
+            .then((response) => response.json())
+            .then((allpokemon) => allpokemon);
+        });
+
+        Promise.all(promises)
+          .then((pokemons) => {
+            setPokeData(pokemons);
           })
-        )
-      );
+          .catch((error) => {
+            console.error(error);
+          });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }, []);
 
   setTimeout(() => {
@@ -61,7 +67,7 @@ export default function Home() {
 
   return (
     <div className={styles.container}>
-      <h1>Pokedex</h1>
+      <h1 className={styles.tittle}>Pokedex</h1>
       <div className={styles.pokedex}>
         {load ? (
           <p>Loading...</p>
@@ -72,12 +78,15 @@ export default function Home() {
               autoPlay
               showIndicators={false}
               width="100%"
+              className={styles.carouselContainer}
             >
-              {poke.map((data, index) => (
-                <div key={data.id} className={styles.containerImgPoke}>
+              {pokeData.map((data, index) => (
+                <div key={data.id} className={styles.containerDataPoke}>
                   <h2 className={styles.name}>
                     {data.name.charAt(0).toUpperCase() + data.name.slice(1)}
                   </h2>
+                  <p className={styles.numberPokemon}># {data.id}</p>
+
                   <img
                     src={data.sprites.front_default}
                     alt={data.name}
@@ -117,6 +126,7 @@ export default function Home() {
                 </div>
               ))}
             </Carousel>
+            <button className={styles.buttonPokedex}>View All Pokedex</button>
           </div>
         )}
       </div>
